@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/f22_math_233_labs.dir/Grid2d.cpp.o CMakeFiles/f22_math_233_labs.dir/FullMatrix.cpp.o CMakeFiles/f22_math_233_labs.dir/main.cpp.o CMakeFiles/f22_math_233_labs.dir/math_tools.cpp.o CMakeFiles/f22_math_233_labs.dir/SL_method.cpp.o -o f22_math_233_labs 
