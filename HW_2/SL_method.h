@@ -17,7 +17,7 @@ private:
     std::vector<double> sol_old;
     std::vector<double> vel_u;
     std::vector<double> vel_v;
-    std::vector<double> x_temp;
+    std::vector<double> temp_vel;
     double x_star;
     double y_star;
     void find_trajectory(int n, double & x_d, double & y_d, double dt);

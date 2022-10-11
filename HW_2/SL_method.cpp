@@ -42,12 +42,12 @@ void SL_method::find_trajectoryRK2(int n, double &x_d, double &y_d, double dt) {
     // RK2 Euler Method
     double x_0 = sl_grid.x_from_n(n);
     double y_0 = sl_grid.y_from_n(n);
-    x_temp = compute_vel(x_0, y_0);
-    x_star = x_0 - .5*dt * x_temp[0];
-    y_star = y_0 - .5*dt * x_temp[1];
-    x_temp = compute_vel(x_star, y_star);
-    x_d = x_0 - dt * x_temp[0];
-    y_d = y_0 - dt * x_temp[1];
+    temp_vel = compute_vel(x_0, y_0);
+    x_star = x_0 - .5*dt * temp_vel[0];
+    y_star = y_0 - .5*dt * temp_vel[1];
+    temp_vel = compute_vel(x_star, y_star);
+    x_d = x_0 - dt * temp_vel[0];
+    y_d = y_0 - dt * temp_vel[1];
 }
 
 void SL_method::Solver(double dt, double Tf) {
@@ -61,7 +61,7 @@ std::vector<double> yd;
 xd.assign(nx, 0.);
 yd.assign(ny, 0.);
 
-// need to work on this more. Might be wrong
+
 for (int i = 0; i < (nx)*(ny); i++){
     find_trajectoryRK2( i, xd[i], yd[i],  dt);
 }
