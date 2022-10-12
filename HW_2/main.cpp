@@ -24,12 +24,14 @@ int main(){
     Grid2d newGrid(N, M, xmin, xmax, ymin, ymax);
 
     SL_method SLM = SL_method();
-
+cout << "1" << endl;
     SLM.set_grid(newGrid);
-
+cout << "2" << endl;
     SLM.Solver(.1,1);
-
-    std:: cout << SLM.compute_error() << std::endl;
+cout << "3" << endl;
+    double err = SLM.compute_error();
+cout << "4" << endl;
+    std:: cout << err << std::endl;
 
 
 }

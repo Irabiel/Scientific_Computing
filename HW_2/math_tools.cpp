@@ -11,16 +11,22 @@
 
 double bilinear_interpolation(Grid2d & grid,std::vector<double> & func,double x, double y){
     //  get xmin and get ymin
-    // if (x,y) are outside domain, throw warning/error message
-    if (x < grid.get_xmin() || x > grid.get_xmax() || y < grid.get_ymin() || y > grid.get_ymax() ) {
-        throw std::invalid_argument("ERROR: (x,y) is outside of grid");
-    }
+    // if (x,y) are outside domain, assign them the nearest boundary
+    if (x < grid.get_xmin() )
+        x = grid.get_xmin();
+    else if (x > grid.get_xmax())
+        x = grid.get_xmax();
+
+    if (y < grid.get_ymin() )
+        y = grid.get_ymin();
+    else if (y > grid.get_ymax())
+        y = grid.get_ymax();
 
     double phi;
     double dx = grid.get_dx();
     double dy = grid.get_dy();
 
-    std::cout <<"dx: " << dx << " dy: " << dy << std::endl;
+    //std::cout <<"dx: " << dx << " dy: " << dy << std::endl;
 
     // get i and j to find which cell C x belongs to
     //  i = floor((x - xmin)/dx)
@@ -28,7 +34,7 @@ double bilinear_interpolation(Grid2d & grid,std::vector<double> & func,double x,
     int i = floor( (x - grid.get_xmin()) / dx);
     int j = floor( (y - grid.get_ymin()) / dy);
 
-    std::cout << "i: " << i << " j: " << j << std::endl;
+    //std::cout << "i: " << i << " j: " << j << std::endl;
 
     double x_i = grid.get_xmin() + i * dx;
     double y_j = grid.get_ymin() + j * dy;
@@ -47,9 +53,17 @@ double bilinear_interpolation(Grid2d & grid,std::vector<double> & func,double x,
 }
 
 double quadratic_interpolation(Grid2d & grid,std::vector<double> & func,double x, double y){
-    if (x < grid.get_xmin() || x > grid.get_xmax() || y < grid.get_ymin() || y > grid.get_ymax() ) {
-        throw std::invalid_argument("ERROR: (x,y) is outside of grid");
-    }
+
+    // if (x,y) are outside domain, assign them the nearest boundary
+    if (x < grid.get_xmin() )
+        x = grid.get_xmin();
+    else if (x > grid.get_xmax())
+        x = grid.get_xmax();
+
+    if (y < grid.get_ymin() )
+        y = grid.get_ymin();
+    else if (y > grid.get_ymax())
+        y = grid.get_ymax();
 
     double phi;
     double dx = grid.get_dx();
@@ -60,7 +74,7 @@ double quadratic_interpolation(Grid2d & grid,std::vector<double> & func,double x
     double bx;
     double by;
 
-    std::cout <<"dx: " << dx << " dy: " << dy << std::endl;
+    //std::cout <<"dx: " << dx << " dy: " << dy << std::endl;
 
     // get i and j to find which cell C x belongs to
     int i = floor( (x - grid.get_xmin()) / dx);
@@ -111,7 +125,7 @@ double quadratic_interpolation(Grid2d & grid,std::vector<double> & func,double x
         bx = FDd2(func[grid.n_from_ij(i, j + 2)], func[grid.n_from_ij(i, j + 1)], func[grid.n_from_ij(i, j)], dy);
     }
 
-    std::cout << "i: " << i << " j: " << j << std::endl;
+    //std::cout << "i: " << i << " j: " << j << std::endl;
 
     double x_i = grid.get_xmin() + i * dx;
     double y_j = grid.get_ymin() + j * dy;

@@ -19,6 +19,8 @@ private:
     std::vector<double> vel_u;
     std::vector<double> vel_v;
     std::vector<double> temp_vel;
+    int nx;
+    int ny;
     double x_star;
     double y_star;
     void find_trajectory(int n, double & x_d, double & y_d, double dt);
@@ -26,13 +28,11 @@ private:
     void sol_IC();
     void sol_True();
     void update_sol_old();
-    std::vector<double> compute_vel(double x, double y);
-
-    double sum_vector(std::vector<double> & n1);
+    void compute_vel(double x, double y);
 
 public:
     SL_method(); // constructor
-    void set_grid(Grid2d & new_grid){sl_grid = new_grid;} // set grid
+    void set_grid(Grid2d & new_grid); // set grid
     std::vector<double> get_sol(){ return sol; }        // access solution
     void set_velocity(std::vector<double> & vel_u0, std::vector<double> & vel_v0); // for constant velocity
     void Solver(double dt, double Tf);
