@@ -5,6 +5,9 @@
 #include "SL_method.h"
 #include "cmath"
 
+SL_method::SL_method(){
+
+}
 
 std::vector<double> compute_vel(double x, double y){
     std::vector<double> vel_temp ;
@@ -21,7 +24,16 @@ void SL_method::sol_IC(){
     for (int i = 0; i < (nx-1)*(ny-1); i++){
         sol_old[i] = sqrt((sl_grid.x_from_n(i) - 0.25)*(sl_grid.x_from_n(i) - 0.25) + sl_grid.x_from_n(i)*sl_grid.x_from_n(i)) - 0.2;
     }
+}
 
+void SL_method::sol_True(){
+    int nx = sl_grid.get_numb_x();
+    int ny = sl_grid.get_numb_y();
+    sol_true.assign(nx*ny, 0.);
+
+    for (int i = 0; i < (nx-1)*(ny-1); i++){
+        sol_true[i] = sqrt((sl_grid.x_from_n(i) - 0.25)*(sl_grid.x_from_n(i) - 0.25) + sl_grid.x_from_n(i)*sl_grid.x_from_n(i)) - 0.2;
+    }
 }
 
 void SL_method::update_sol_old(){
@@ -52,29 +64,42 @@ void SL_method::find_trajectoryRK2(int n, double &x_d, double &y_d, double dt) {
 
 void SL_method::Solver(double dt, double Tf) {
 
-int nx = sl_grid.get_numb_x();
-int ny = sl_grid.get_numb_y();
-sol.assign(nx * ny, 0.);
+    int nx = sl_grid.get_numb_x();
+    int ny = sl_grid.get_numb_y();
+    sol.assign(nx * ny, 0.);
 
-std::vector<double> xd;
-std::vector<double> yd;
-xd.assign(nx, 0.);
-yd.assign(ny, 0.);
+    std::vector<double> xd;
+    std::vector<double> yd;
+    xd.assign(nx, 0.);
+    yd.assign(ny, 0.);
 
 
-for (int i = 0; i < (nx)*(ny); i++){
-    find_trajectoryRK2( i, xd[i], yd[i],  dt);
+    for (int i = 0; i < (nx) * (ny); i++) {
+        find_trajectoryRK2(i, xd[i], yd[i], dt);
+    }
+
+    int nt = ceil(Tf / dt);
+    sol_IC();
+
+    for (int n = 1; n < nt; n++) {
+        for (int i = 0; i < nx; i++)
+            for (int j = 0; j < ny; j++)
+                sol[i + j] = quadratic_interpolation(sl_grid, sol_old, xd[i], yd[j]);
+        update_sol_old();
+    }
 }
 
-int nt = ceil(Tf/dt);
-sol_IC();
-
-for (int n = 1; n < nt; n++){
-    for (int i = 0; i < nx; i++)
-        for (int j = 0; j < ny; j++)
-            sol[i+j] = quadratic_interpolation(sl_grid, sol_old, xd[i], yd[j]);
-    update_sol_old();
-}
 
 
+double SL_method::compute_error(){
+    int nx = sl_grid.get_numb_x();
+    int ny = sl_grid.get_numb_y();
+
+    double err = 0.;
+    sol_True();
+
+    for (int i = 0; i < nx*ny; i++)
+        err += abs(sol[i] - sol_true[i]);
+
+    return err;
 }
