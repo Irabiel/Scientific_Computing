@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include "FullMatrix.h"
+#include "SL_method.h"
 
 using namespace std;
 
@@ -22,6 +23,13 @@ int main(){
 
     Grid2d newGrid(N, M, xmin, xmax, ymin, ymax);
 
-   cout << minmod(-3.2 , -3.) << endl;
+    SL_method SLM = SL_method();
+
+    SLM.set_grid(newGrid);
+
+    SLM.Solver(.1,1);
+
+    std:: cout << SLM.compute_error() << std::endl;
+
 
 }
