@@ -21,7 +21,7 @@ void SL_method::sol_IC(){
     sol_old.assign(nx*ny, 0.);
 
     for (int i = 0; i < nx*ny; i++){
-        sol_old[i] = sqrt((sl_grid.x_from_n(i) - 0.25)*(sl_grid.x_from_n(i) - 0.25) + sl_grid.x_from_n(i)*sl_grid.x_from_n(i)) - 0.2;
+        sol_old[i] = sqrt((sl_grid.x_from_n(i) - 0.25)*(sl_grid.x_from_n(i) - 0.25) + sl_grid.y_from_n(i)*sl_grid.y_from_n(i)) - 0.2;
     }
 }
 
@@ -29,13 +29,20 @@ void SL_method::sol_True(){
     sol_true.assign(nx*ny, 0.);
 
     for (int i = 0; i < nx*ny; i++){
-        sol_true[i] = sqrt((sl_grid.x_from_n(i) - 0.25)*(sl_grid.x_from_n(i) - 0.25) + sl_grid.x_from_n(i)*sl_grid.x_from_n(i)) - 0.2;
+        sol_true[i] = sqrt((sl_grid.x_from_n(i) - 0.25)*(sl_grid.x_from_n(i) - 0.25) + sl_grid.y_from_n(i)*sl_grid.y_from_n(i)) - 0.2;
     }
 }
 
 void SL_method::update_sol_old(){
-    for (int i = 0; i < sol_old.size() ; i++){
+    for (int i = 0; i < nx*ny ; i++){
         sol_old[i] = sol[i];
+    }
+}
+
+void SL_method::set_velocity() {
+    for (int i = 0; i< nx* ny; i++){
+        vel_u[i] = - sl_grid.y_from_n(i) ;
+        vel_v[i] = sl_grid.x_from_n(i) ;
     }
 }
 
@@ -69,9 +76,10 @@ void SL_method::Solver(double dt, double Tf) {
     xd.assign(nx, 0.);
     yd.assign(ny, 0.);
 
-    for (int i = 0; i < (nx) * (ny); i++) {
-        find_trajectoryRK2(i, xd[i], yd[i], dt);
-    }
+    set_velocity();
+    for (int i = 0; i < nx ; i++)
+        for (int j = 0; j < ny; j++)
+            find_trajectory(i, xd[i], yd[j], dt);
 
     int nt = ceil(Tf / dt);
     sol_IC();
@@ -79,10 +87,10 @@ void SL_method::Solver(double dt, double Tf) {
     for (int n = 0; n < nt; n++) {
         for (int i = 0; i < nx; i++)
             for (int j = 0; j < ny; j++)
-                sol[i + j*ny] = quadratic_interpolation(sl_grid, sol_old, xd[i], yd[j]);
+                sol[i*nx + j] = quadratic_interpolation(sl_grid, sol_old, xd[i], yd[j]);
         update_sol_old();
     }
-    cout << sol.size() << " " << nx << " " << ny << endl;
+
 }
 
 double SL_method::compute_error(){

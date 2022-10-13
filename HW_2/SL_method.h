@@ -34,7 +34,9 @@ public:
     SL_method(); // constructor
     void set_grid(Grid2d & new_grid); // set grid
     std::vector<double> get_sol(){ return sol; }        // access solution
-    void set_velocity(std::vector<double> & vel_u0, std::vector<double> & vel_v0); // for constant velocity
+    std::vector<double> get_True_sol(){ return sol_true; }        // access true solution
+    void set_velocity(std::vector<double> & vel_u0, std::vector<double> & vel_v0);
+    void set_velocity();
     void Solver(double dt, double Tf);
     double compute_error();
 
