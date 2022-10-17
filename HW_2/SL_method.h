@@ -21,13 +21,9 @@ private:
     std::vector<double> temp_vel;
     int nx;
     int ny;
-    double x_star;
-    double y_star;
     void find_trajectory(int n, double & x_d, double & y_d, double dt);
     void find_trajectoryRK2(int n, double & x_d, double & y_d, double dt);
-    void sol_IC();
-    void sol_True();
-    void update_sol_old();
+    void sol_IC(std::vector<double> & sol0);
     void compute_vel(double x, double y);
 
 public:

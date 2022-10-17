@@ -12,8 +12,8 @@
 using namespace std;
 
 int main(){
-    long N = 50;
-    long M = 50;
+    long N = 100;
+    long M = 100;
 
     double xmin = -1.;
     double xmax = 1.;
@@ -25,7 +25,7 @@ int main(){
     double dx = newGrid.get_dx();
     double dy = newGrid.get_dy();
 
-    double dt = min(dx,dy) * .5;
+    double dt = max(dx,dy) * 1.5;
 
     SL_method SLM = SL_method();
 
