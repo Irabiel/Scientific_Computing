@@ -7,14 +7,13 @@
 #include "Grid2d.h"
 #include <vector>
 #include <cmath>
-#include "FullMatrix.h"
 #include "SL_method.h"
 
 using namespace std;
 
 int main(){
-    long N = 10;
-    long M = 10;
+    long N = 50;
+    long M = 50;
 
     double xmin = -1.;
     double xmax = 1.;
@@ -26,7 +25,7 @@ int main(){
     double dx = newGrid.get_dx();
     double dy = newGrid.get_dy();
 
-    double dt = min(dx,dy) * 1.5;
+    double dt = min(dx,dy) * .5;
 
     SL_method SLM = SL_method();
 
@@ -47,5 +46,5 @@ int main(){
     newGrid.print_VTK_format("../SLM_True.vtk");
     newGrid.print_VTK_format(True_sol, "Approx", "../SLM_True.vtk");
 
-return 0;
+    return 0;
 }

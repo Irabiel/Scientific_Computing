@@ -40,6 +40,9 @@ void SL_method::update_sol_old(){
 }
 
 void SL_method::set_velocity() {
+    vel_v.assign(nx*ny,0.);
+    vel_u.assign(nx*ny,0.);
+
     for (int i = 0; i< nx* ny; i++){
         vel_u[i] = - sl_grid.y_from_n(i) ;
         vel_v[i] = sl_grid.x_from_n(i) ;
@@ -50,8 +53,9 @@ void SL_method::find_trajectory(int n, double &x_d, double &y_d, double dt) {
     // RK1 Euler Method
     double x_0 = sl_grid.x_from_n(n);
     double y_0 = sl_grid.y_from_n(n);
-    x_d = x_0 - dt * vel_u[n];
-    y_d = y_0 - dt * vel_v[n];
+    compute_vel(x_0, y_0);
+    x_d = x_0 - dt * temp_vel[0];
+    y_d = y_0 - dt * temp_vel[1];
 }
 
 void SL_method::find_trajectoryRK2(int n, double &x_d, double &y_d, double dt) {
@@ -73,32 +77,31 @@ void SL_method::Solver(double dt, double Tf) {
 
     std::vector<double> xd;
     std::vector<double> yd;
-    xd.assign(nx, 0.);
-    yd.assign(ny, 0.);
-
-    set_velocity();
+    xd.assign(nx*ny, 0.);
+    yd.assign(ny*nx, 0.);
     for (int i = 0; i < nx ; i++)
-        for (int j = 0; j < ny; j++)
-            find_trajectory(i, xd[i], yd[j], dt);
+        for (int j = 0; j < ny; j++) {
+            find_trajectoryRK2(i + j*ny, xd[i + j*ny], yd[i + j*ny], dt);
+        }
 
     int nt = ceil(Tf / dt);
     sol_IC();
-
     for (int n = 0; n < nt; n++) {
         for (int i = 0; i < nx; i++)
             for (int j = 0; j < ny; j++)
-                sol[i*nx + j] = quadratic_interpolation(sl_grid, sol_old, xd[i], yd[j]);
+                sol[i + j*ny] = quadratic_interpolation(sl_grid, sol_old, xd[i + j*ny], yd[i + j*ny]);
         update_sol_old();
     }
-
 }
 
 double SL_method::compute_error(){
     double err = 0.;
     sol_True();
 
-    for (int i = 0; i < nx*ny; i++)
+    for (int i = 0; i < nx*ny; i++) {
+//        err = max(abs(sol[i] - sol_true[i]), err);
         err += abs(sol[i] - sol_true[i]);
+    }
 
     return err;
 }
