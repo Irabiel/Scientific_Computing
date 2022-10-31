@@ -12,8 +12,8 @@
 using namespace std;
 
 int main(){
-    long N = 100;
-    long M = 100;
+    long N = 10;
+    long M = 10;
 
     double xmin = -1.;
     double xmax = 1.;
@@ -25,17 +25,21 @@ int main(){
     double dx = newGrid.get_dx();
     double dy = newGrid.get_dy();
 
-    double dt = max(dx,dy) * 1.5;
+    double ratio = 1.;
+
+    double dt = max(dx,dy) / ratio;
 
     SL_method SLM = SL_method();
 
     SLM.set_grid(newGrid);
 
+    SLM.set_REI(0);
+
     SLM.Solver(dt,2*M_PI);
 
     double err = SLM.compute_error();
 
-    std:: cout << err << std::endl;
+    std:: cout << "The errors max norm =" << err << std::endl;
 
     vector<double> sol = SLM.get_sol();
     SLM.get_True_sol();
@@ -45,6 +49,11 @@ int main(){
     newGrid.print_VTK_format(sol, "Approx", "../SLM_approx.vtk");
     newGrid.print_VTK_format("../SLM_True.vtk");
     newGrid.print_VTK_format(True_sol, "Approx", "../SLM_True.vtk");
+
+    vector<double> err_map;
+    SLM.error_map(sol, True_sol,err_map);
+    newGrid.print_VTK_format("../Error_map.vtk");
+    newGrid.print_VTK_format(err_map, "Error_map", "../Error_map.vtk");
 
     return 0;
 }

@@ -4,6 +4,7 @@
 
 #include "math_tools.h"
 #include <cmath>
+#include <vector>
 
 // suppose we have grid in 2D [xmin,xmax] x [ymin,ymax]
 // find cell in which (x,y) belongs
@@ -78,55 +79,18 @@ double quadratic_interpolation(Grid2d & grid,std::vector<double> & func,double x
     int i = floor( (x - grid.get_xmin()) / dx);
     int j = floor( (y - grid.get_ymin()) / dy);
 
-    // check if the x component is on either boundary or next to the left boundary
-//    if (i == 0) {
-//        std::cout << func[grid.n_from_ij(i-1, j)] << std::endl;
-//        ax = FDd2(func[grid.n_from_ij(i + 2, j)], func[grid.n_from_ij(i + 1, j)], func[grid.n_from_ij(i, j)],
-//                         dx);
-//        bx = ax;
-//    }
-//    else if (i == grid.get_numb_x() -1){
-//        ax = FDd2(func[grid.n_from_ij(i, j)], func[grid.n_from_ij(i - 1, j)], func[grid.n_from_ij(i-2, j)],
-//                         dx);
-//        bx = ax;
-//    }
-//    else{
-//        ax = FDd2(func[grid.n_from_ij(i + 1, j)], func[grid.n_from_ij(i, j)], func[grid.n_from_ij(i - 1, j)], dx);
-//        bx = FDd2(func[grid.n_from_ij(i + 2, j)], func[grid.n_from_ij(i + 1, j)], func[grid.n_from_ij(i, j)], dx);
-//    }
-
-
     ax = FDd2(func[grid.n_from_ij(i + 1, j)], func[grid.n_from_ij(i, j)], func[grid.n_from_ij(i - 1, j)], dx);
     bx = FDd2(func[grid.n_from_ij(i + 2, j)], func[grid.n_from_ij(i + 1, j)], func[grid.n_from_ij(i, j)], dx);
 
     ay = FDd2(func[grid.n_from_ij(i, j + 1)], func[grid.n_from_ij(i, j)], func[grid.n_from_ij(i, j - 1)], dy);
     by = FDd2(func[grid.n_from_ij(i, j + 2)], func[grid.n_from_ij(i, j + 1)], func[grid.n_from_ij(i, j)], dy);
 
-//    // check if the y component is on either boundary or next to the left boundary
-//    if (j == 0) {
-//        ay = FDd2(func[grid.n_from_ij(i, j + 2)], func[grid.n_from_ij(i, j + 1)], func[grid.n_from_ij(i, j)],
-//                         dy);
-//        by = ay;
-//    }
-//    else if (j == grid.get_numb_y()-1){
-//        ay = FDd2(func[grid.n_from_ij(i, j)], func[grid.n_from_ij(i, j -1)], func[grid.n_from_ij(i, j - 2)],
-//                         dy);
-//        by = ay;
-//    }
-//    else{
-//        ay = FDd2(func[grid.n_from_ij(i, j + 1)], func[grid.n_from_ij(i, j)], func[grid.n_from_ij(i, j - 1)], dy);
-//        by = FDd2(func[grid.n_from_ij(i, j + 2)], func[grid.n_from_ij(i, j + 1)], func[grid.n_from_ij(i, j)], dy);
-//    }
-
-    //std::cout << "i: " << i << " j: " << j << std::endl;
-
     double x_i = grid.get_xmin() + i * dx;
     double y_j = grid.get_ymin() + j * dy;
     double x_ip1 = x_i + dx;
     double y_jp1 = y_j + dy;
 
-    // Use quadratic interpolation (formula in Assignment 3) to get value at x
-    // (i.e. think weighted avg)
+    // Use quadratic interpolation (formula in Assignment 3) to get value at (x, y)
     // (i, j), (i + 1, j), (i, j + 1), (i + 1, j + 1) are the corners of the cell C
     phi  = func[grid.n_from_ij(i    ,   j  )]  * ( x_ip1 - x   ) * ( y_jp1 - y   ) / (dx*dy) ;
     phi += func[grid.n_from_ij(i+1,   j  )]  * ( x     - x_i ) * ( y_jp1 - y   ) / (dx*dy) ;
@@ -135,6 +99,12 @@ double quadratic_interpolation(Grid2d & grid,std::vector<double> & func,double x
     phi -= .5 * ( x     - x_i ) * ( x_ip1 - x   ) * minmod(ax, bx) ;
     phi -= .5 * ( y     - y_j ) * ( y_jp1 - y   ) * minmod(ay, by) ;
     return phi;
+}
+
+
+
+double sign(double x){
+    return (x > 0) ? 1. : -1.;
 }
 
 inline double FDd2(double fxp,double fx,double fxm, double dx){
@@ -148,7 +118,6 @@ double minmod(double a, double b){
         return a;
 
     return b;
-
 }
 
 

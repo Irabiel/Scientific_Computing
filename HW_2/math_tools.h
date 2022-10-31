@@ -11,6 +11,7 @@
 
 double bilinear_interpolation(Grid2d & grid,std::vector<double> & func,double x, double y);
 
+double sign(double x);
 double quadratic_interpolation(Grid2d & grid,std::vector<double> & func,double x, double y);
 double minmod(double a, double b);
 inline double FDd2(double fxp,double fx,double fxm, double dx);
