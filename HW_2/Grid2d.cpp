@@ -115,3 +115,17 @@ void Grid2d::print_VTK_format( std::vector<double> &F, std::string data_name,
     for (long n=0; n<num_of_nodes; n++) fprintf(outFile,"%e \n",F[n]);
     fclose (outFile);
 }
+
+void print_results_vtk(Grid2d newGrid, std::string fileName, double cfl, int itr,
+                       std::vector<double> phi){
+    // build fileName
+    fileName = fileName + std::to_string(cfl);
+    fileName.append("_");
+    fileName = fileName + std::to_string(itr);
+    fileName.append(".vtk");
+
+    // print to file
+    newGrid.print_VTK_format(fileName);
+    newGrid.print_VTK_format(phi, "phi", fileName);
+
+}

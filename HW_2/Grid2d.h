@@ -48,6 +48,9 @@ public:
     void print_VTK_format(std::string output_file);
     void print_VTK_format(std::vector<double> &F, std::string data_name,
             std::string file_name);
+
+    void print_results_vtk(Grid2d newGrid, std::string fileName, double cfl, int itr,
+                           std::vector<double> phi);
 };
 
 
